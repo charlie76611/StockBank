@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Console -->
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%p] (%F:%M:%L):%m%n"/>
+		</layout>
+	</appender>	
+
+    <category name="net.sourceforge.stripes.integration.spring.SpringHelper">
+        <!-- SpringHelper.java:161 有一個很吵的 log, 新的 stripes 才會改掉, 先關掉這個 log.
+            reference: http://www.stripesframework.org/jira/browse/STS-732
+			<priority value="ERROR" />
+        -->
+	</category>
+
+    <category name="org.apache.tiles.web.util.TilesDispatchServlet">
+        <!-- 每次都會出現把 POST 轉成 GET 的 info log, 對系統來說是無用的, 因此將它改為 error 等級 -->
+		<priority value="ERROR" />
+	</category>
+	
+	<category name="com.charlie" additivity="false">
+		<priority value="DEBUG" />
+		<appender-ref ref="STDOUT" />
+	</category>				
+	
+	<category name="com.ibatis">
+		<priority value="WARN" />
+	</category>
+	<category name="java.sql">
+		<priority value="WARN" />
+	</category>
+	
+	<root>
+		<priority value="ERROR" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</log4j:configuration>

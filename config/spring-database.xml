@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+	default-lazy-init="true" default-autowire="byName">
+	
+	<!--JDBC:dev -->
+	
+<!-- 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+<!-- 		destroy-method="close"> -->
+<!-- 		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" /> -->
+<!-- 		<property name="url" value="jdbc:sqlserver://T00030PC;instanceName=sqlexpress;database=DynaCMS5_0" /> -->
+<!-- 		<property name="username" value="sa" /> -->
+<!-- 		<property name="password" value="sldb01" /> -->
+<!-- 	</bean> -->
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+		<property name="url" value="jdbc:sqlserver://CHARLIEWOO\SQLEXPRESS;database=StockBank" />
+		<property name="username" value="sa" />
+		<property name="password" value="1234" />
+	</bean>		
+	
+	<!--JDBC:uat -->
+	<!-- 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+		<property name="url"
+			value="jdbc:sqlserver://TFBIBONUSDB:1433;database=TFBIBONUS" />
+		<property name="username" value="" />
+		<property name="password" value="" />
+	</bean>
+	 -->	
+	
+    <!-- JNDI datasource -->
+<!--     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">  -->
+<!--         <property name="jndiName"> -->
+<!--             <value>jdbc/ibonus</value> -->
+<!--         </property>   -->
+<!--     </bean> -->
+
+	<!-- sqlMapClient  -->	
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation">
+           	<value>classpath:sqlMapConfig.xml</value>
+        </property>
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+</beans>       
