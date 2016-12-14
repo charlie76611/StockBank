@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL MAP 2.0//EN" 
+	"http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="dinnerMain">
+	<typeAlias alias="RandomDinnerModel" type="com.charlie.transaction.model.RandomDinnerModel" />
+
+	<resultMap id="result" class="RandomDinnerModel">
+		<result property="sysid" column="sysid" />
+		<result property="sysstatus" column="sysstatus" />
+		<result property="syscreator" column="syscreator" />
+		<result property="syscreatetime" column="syscreatetime" />
+		<result property="sysmodifier" column="sysmodifier" />
+		<result property="sysmodifytime" column="sysmodifytime" />
+		<result property="name" column="name" />
+		<result property="category" column="category"  />
+		<result property="introduction" column="introduction" />
+		<result property="randomTimes" column="random_times" />
+		<result property="storePicture" column="store_picture" />
+		<result property="storeType" column="store_type" />
+		<result property="foodType" column="food_type" />
+		<result property="closeTime" column="close_time" />
+		<result property="reserveFlag" column="reserve_flag" />
+		<result property="region" column="region" />
+	</resultMap>
+	
+	<select id="findById" resultMap="result" parameterClass="long">
+		select * from dinner_main
+		where sysid = #sysid# and sysstatus = 'Y'
+	</select>
+	
+	<select id="findTotalCount" resultClass="int">
+		select count(*)
+		from dinner_main u WHERE u.sysstatus = 'Y'
+		<isNotEmpty property="conditions">
+			<iterate property="conditions">
+				$conditions[].conditionPrefix$ u.$conditions[].conditionKey$ 
+				$conditions[].conditionType$ $conditions[].conditionValue$
+			</iterate>
+		</isNotEmpty>
+	</select>
+
+	<select id="findByQueryCondition" resultMap="result" parameterClass="com.charlie.resource.commons.QueryConditionModel">
+
+		SELECT * FROM dinner_main u 
+		WHERE u.sysstatus = 'Y'
+		<isNotEmpty property="conditions">
+			<iterate property="conditions">
+				$conditions[].conditionPrefix$ u.$conditions[].conditionKey$ 
+				$conditions[].conditionType$ $conditions[].conditionValue$
+			</iterate>
+		</isNotEmpty>
+		<dynamic prepend="ORDER BY "> 
+			<isNotEmpty property="sortname"> 
+				$sortname$ $ordertype$ 
+			</isNotEmpty> 
+		</dynamic>
+		
+	</select>
+
+	<insert id="insert" parameterClass="RandomDinnerModel">
+		insert into dinner_main (
+			sysstatus, syscreator, syscreatetime, sysmodifier, sysmodifytime,
+			name, category, introduction, random_times, store_picture, 
+			food_type, store_type, close_time, reserve_flag, region 
+		) values (
+			#sysstatus#, 
+			#syscreator#, 
+			#syscreatetime#, 
+			#sysmodifier#, 
+			#sysmodifytime#, 
+			#name#, 
+			#category#, 
+			#introduction#, 
+			#randomTimes#, 
+			#storePicture#,
+			#foodType#,
+			#storeType#,
+			#closeTime#,
+			#reserveFlag#,
+			#region#
+		)
+		<selectKey resultClass="long" keyProperty="sysid">
+			SELECT @@IDENTITY AS sysid
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="RandomDinnerModel" >
+		update dinner_main set
+			sysstatus = #sysstatus#,
+			sysmodifier = #sysmodifier#, 
+			sysmodifytime = #sysmodifytime#,
+			name = #name#,
+			category = #category#,
+			introduction = #introduction#,
+			random_times = #randomTimes#,
+			store_picture = #storePicture#,
+			store_type = #storeType#,
+			food_type = #foodType#,
+			close_time = #closeTime#,
+			reserve_flag = #reserveFlag#,
+			region = #region#
+		where sysid = #sysid#
+	</update>
+	
+	<update id="updateRandomTimes" parameterClass="java.util.Map">
+		update dinner_main set
+			random_times = #randomTimes#
+		where sysid = #sysid#	
+	</update>
+	
+	<delete id="delete" parameterClass="java.util.Map">
+		<!--  delete from dinner_main where sysid = #sysid#  -->
+		update dinner_main set sysstatus = 'N', sysmodifier = #sysmodifier#,  sysmodifytime = getDate()
+		where sysid = #sysid#
+	</delete>
+
+</sqlMap>

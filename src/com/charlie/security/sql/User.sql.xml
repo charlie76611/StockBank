@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL MAP 2.0//EN" 
+	"http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="dynacmsuser">
+	<typeAlias alias="UserModel" type="com.charlie.security.model.UserModel" />
+	<!--
+
+		<cacheModel id="cache.user" type="LRU" readOnly="true"> <flushInterval
+		hours="24" /> <flushOnExecute statement="trading.executeTrade" />
+		<property name="cache-size" value="1000" /> </cacheModel>
+	-->
+
+	<resultMap id="result" class="UserModel" groupBy="sysid">
+		<result property="sysid" column="sysid" />
+		<result property="sysstatus" column="sysstatus" />
+		<result property="syscreator" column="syscreator" />
+		<result property="syscreatetime" column="syscreatetime" />
+		<result property="sysmodifier" column="sysmodifier" />
+		<result property="sysmodifytime" column="sysmodifytime" />
+		<result property="sysbegintime" column="sysbegintime" />
+		<result property="sysendtime" column="sysendtime" />
+		<result property="account" column="account" />
+		<result property="password" column="password" />
+		<result property="username" column="username" />
+		<result property="nickname" column="nickname" />
+		<result property="email" column="email" />
+        <result property="unitname" column="unitname" />
+		<result property="lastlogintime" column="lastlogintime" />
+		<result property="lastpassword" column="lastpassword" />
+		<result property="lastchgpwdtime" column="lastchgpwdtime" />
+		<result property="errorlogincount" column="errorlogincount" />
+		
+<!-- 		<result property="roles" select="dynacmsuser.findRoleByUserId" column="sysid"/> -->
+	</resultMap>
+	<resultMap id="roleMap" class="com.charlie.security.model.RoleModel">
+		<result property="sysid" column="sysid" />
+		<result property="sysstatus" column="sysstatus" />
+		<result property="syscreator" column="syscreator" />
+		<result property="syscreatetime" column="syscreatetime" />
+		<result property="sysmodifier" column="sysmodifier" />
+		<result property="sysmodifytime" column="sysmodifytime" />
+		<result property="sysbegintime" column="sysbegintime" />
+		<result property="sysendtime" column="sysendtime" />
+		<result property="rolename" column="rolename" />
+		<result property="description" column="description" />
+	</resultMap>
+	
+	<select id="findRoleByUserId" resultMap="roleMap">
+		select *
+		from dynacms_role r join dynacms_userrole ur on r.sysid = ur.roleid
+		where  ur.userid = #sysid# and r.sysstatus in ('Y','N')
+	</select>
+
+	<select id="findById" resultMap="result" parameterClass="long">
+	
+		select
+		u.*, r.sysid as roleid, r.rolename, r.description as roledesc
+		from
+		dynacms_user u
+		left join dynacms_userrole ur
+		on u.sysid = ur.userid
+		left
+		join dynacms_role r
+		on ur.roleid = r.sysid
+		where u.sysid = #id# AND
+		u.sysstatus IN ('Y','N')
+	
+	</select>
+	
+	<select id="findTotalCount" resultClass="int">
+		select count(*)
+		from dynacms_user u WHERE u.sysstatus IN ('Y','N') 
+		<isNotEmpty property="conditions">
+			<iterate property="conditions">
+				$conditions[].conditionPrefix$ u.$conditions[].conditionKey$ 
+				$conditions[].conditionType$ $conditions[].conditionValue$
+			</iterate>
+		</isNotEmpty>
+	</select>
+
+	<select id="findByAccount" resultMap="result">
+		select 
+			u.*, r.sysid as roleid, r.rolename, r.description as roledesc
+		from dynacms_user u
+		left join dynacms_userrole ur
+		on u.sysid = ur.userid
+		left join dynacms_role r
+		on ur.roleid = r.sysid
+		where u.account = #account# AND u.sysstatus IN ('Y','N')
+	</select>
+	
+	<select id="findByAccounts" resultMap="result" parameterClass="java.util.List">
+		select 
+			u.*, r.sysid as roleid, r.rolename, r.description as roledesc
+		from dynacms_user u
+		left join dynacms_userrole ur
+		on u.sysid = ur.userid
+		left join dynacms_role r
+		on ur.roleid = r.sysid
+		where u.account in
+			<iterate open="(" close=")" conjunction=",">
+				#[]#
+			</iterate>
+		AND u.sysstatus IN ('Y','N')
+	</select>
+	
+	<select id="findByRolenames" resultMap="result" parameterClass="java.util.List">
+		SELECT u.* FROM dbo.dynacms_role role
+		JOIN dynacms_userrole userrole
+			ON (role.sysid = userrole.roleid and role.rolename in
+			 	<iterate open="(" close=")" conjunction=",">
+					#[]#
+				</iterate>
+			    )
+		JOIN dynacms_user u 
+			ON (u.sysid = userrole.userid)
+		WHERE u.sysstatus IN ('Y','N')
+	</select>
+    
+	<select id="findByQueryCondition" resultMap="result" parameterClass="com.charlie.resource.commons.QueryConditionModel">
+
+		SELECT * FROM dynacms_user u 
+		WHERE u.sysstatus IN ('Y','N')
+		<isNotEmpty property="conditions">
+			<iterate property="conditions">
+				$conditions[].conditionPrefix$ u.$conditions[].conditionKey$ 
+				$conditions[].conditionType$ $conditions[].conditionValue$
+			</iterate>
+		</isNotEmpty>
+		<dynamic prepend="ORDER BY "> 
+			<isNotEmpty property="sortname"> 
+				$sortname$ $ordertype$ 
+			</isNotEmpty> 
+		</dynamic>
+		
+	</select>
+
+
+	<insert id="insert" parameterClass="UserModel">
+		insert into dynacms_user (
+			sysstatus, syscreator, syscreatetime, sysmodifier, sysmodifytime, sysbegintime, sysendtime,
+			account, password, username, nickname, email, unitname, lastlogintime, lastpassword, lastchgpwdtime, errorlogincount
+		) values (
+			#sysstatus#, 
+			#syscreator#, 
+			#syscreatetime#, 
+			#sysmodifier#, 
+			#sysmodifytime#, 
+			#sysbegintime#, 
+			#sysendtime#,
+			#account#, 
+			#password#, 
+			#username#, 
+			#nickname#, 
+			#email#,
+            #unitname#,
+			#lastlogintime#, 
+			#lastpassword#, 
+			#lastchgpwdtime#, 
+			#errorlogincount#
+		)
+		<selectKey resultClass="long" keyProperty="sysid">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="UserModel" >
+		update dynacms_user set
+			sysstatus = #sysstatus#, 
+			syscreator = #syscreator#, 
+			syscreatetime = #syscreatetime#, 
+			sysmodifier = #sysmodifier#, 
+			sysmodifytime = #sysmodifytime#, 
+			sysbegintime = #sysbegintime#, 
+			sysendtime = #sysendtime#,
+			account = #account#, 
+			password = #password#, 
+			username = #username#, 
+			nickname = #nickname#, 
+			email = #email#,
+            unitname = #unitname#,
+			lastlogintime = #lastlogintime#, 
+			lastpassword = #lastpassword#, 
+			lastchgpwdtime = #lastchgpwdtime#, 
+			errorlogincount = #errorlogincount#
+		where sysid = #sysid#	
+	</update>
+	
+	<update id="updateErrTimes" parameterClass="java.util.Map">
+		update dynacms_user set
+			errorlogincount = #errorlogincount#
+		where account = #account#	
+	</update>
+	
+	<update id="updateLoginInfo" parameterClass="java.util.Map">
+		update dynacms_user set
+			lastlogintime = #lastlogintime#
+		where account = #account#	
+	</update>
+	
+	<delete id="delete" parameterClass="java.util.Map" >
+		update dynacms_user set sysstatus = 'N', syscreator = #syscreator#, 
+			syscreatetime = getDate()
+		where sysid = #sysid#
+	</delete>
+
+</sqlMap>
