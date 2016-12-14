@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="description" content="Charlie Woo's boostrap template">
+<meta name="author" content="Charlie Woo">
+<title>My Bootstrap Test</title>
+
+<!-- CSS Included-->
+<link rel="stylesheet" href="/StockBank/public/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" href="/StockBank/public/bootstrap/css/bootstrap-responsive.css">
+<link rel="stylesheet" href="/StockBank/public/jquery/fancyBox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+
+<!-- CSS Customize-->
+<style type="text/css">
+	body {
+		padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+	}
+</style>
+    
+<!-- Javascript Included -->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript" src="/StockBank/public/jquery/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<!-- Javascript Customize -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".fancybox").fancybox();
+		$(".fancybox-thumb").fancybox({
+			prevEffect	: 'none',
+			nextEffect	: 'none',
+			helpers	: {
+				title	: {
+					type: 'outside'
+				},
+				thumbs	: {
+					width	: 50,
+					height	: 50
+				}
+			}
+		});
+		
+		drawChart();
+		drawChart2();	
+	});
+
+	google.load("visualization", "1", {
+		packages : [ "corechart" ]
+	});
+	//google.setOnLoadCallback(drawChart);
+	function drawChart() {
+		var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+
+		var options = {
+			title : '2013 CPBL明星賽票選(白)',
+			backgroundColor : '#f9f9f9',
+			titleTextStyle : {
+				color : 'black',
+				fontSize : 16
+			},
+			legend : {
+				position : 'right',
+				textStyle : {
+					color : 'black',
+					fontSize : 14
+				}
+			},
+			is3D : true
+		};
+
+		var data = google.visualization.arrayToDataTable([
+				[ '統計項目', '總人數' ], [ '彭政閔', 526 ],
+				[ '張建銘', 243 ], [ '張泰山', 974 ],
+				[ '周思齊', 1582 ], [ '陳金鋒', 368 ] ]);
+
+		chart.draw(data, options);
+
+	}
+
+	function drawChart2() {
+		var data = google.visualization.arrayToDataTable([
+			['Year', 'Sales', 'Expenses'],
+			['2004',  1000,      400],
+			['2005',  1170,      460],
+			['2006',  660,       1120],
+			['2007',  1030,      540]
+		]);
+		
+		var options = {
+			title: 'Company Performance'
+		};
+	
+		var chart2 = new google.visualization.LineChart(document.getElementById('chart2_div'));
+		chart2.draw(data, options);
+	}
+	
+	$(function() {
+		var latlng = new google.maps.LatLng(25.176642,121.45423);
+		var myOptions = {
+			zoom: 15,
+			center: latlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+		var marker = new google.maps.Marker({
+			position: latlng,
+			title:"淡水阿給的店"
+		});
+		marker.setMap(map);
+	});
+	     
+	    
+</script>
+</head>
+
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="#">Project name</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Bootstrap starter template</h1>
+        <p>Use this document as a way to quick start any new project.<br>
+            All you get is this message and a barebones HTML document.
+            
+            <a href="#" class="btn btn-info btn-mini"><i class="icon-ok icon-white"></i> SAVE</a>
+            <a href="#" class="btn btn-warning btn-small"><i class="icon-ok icon-white"></i> SAVE</a>
+            <a href="#" class="btn btn-success"><i class="icon-ok icon-white"></i> SAVE</a>
+            <a href="http://youtu.be/t9VUIcfvCLA?autoplay=1" class="btn btn-danger btn-large various fancybox.iframe"><i class="icon-ok icon-white"></i> Youtube</a>
+        </p>
+            
+        <table class="table table-condensed table-bordered table-hover" style="width:50%">
+			<caption style="background-color:lavender;text-align:left;"><i class="icon-search"></i> AAA</caption>
+			<thead>
+				<tr>
+					<th>123</th>
+					<th>456</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>...</td>
+					<td>...</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div id="map_canvas" style="width: 500px; height: 250px;"></div>
+		
+		<a class="fancybox-thumb" rel="fancybox-thumb" href="http://farm9.staticflickr.com/8507/8454547519_f8116520e1_b.jpg" title="Ayvalık, Turkey (Nejdet Düzen)">
+			<img src="http://farm9.staticflickr.com/8507/8454547519_f8116520e1_m.jpg" alt="" />
+		</a>
+		<a class="fancybox-thumb" rel="fancybox-thumb" href="http://farm8.staticflickr.com/7152/6394238505_c94fdd1d89_b.jpg" title="Sicilian Scratches   erice (italianoadoravel on/off coming back)">
+			<img src="http://farm8.staticflickr.com/7152/6394238505_c94fdd1d89_m.jpg" alt="" />
+		</a>
+		<a class="fancybox-thumb" rel="fancybox-thumb" href="http://farm9.staticflickr.com/8481/8215602321_69d9939b8b_b.jpg" title="The Trail (Msjunior-Check out my galleries)">
+			<img src="http://farm9.staticflickr.com/8481/8215602321_69d9939b8b_m.jpg" alt="" />
+		</a>
+<!-- 		<a class="fancybox-thumb" rel="fancybox-thumb" href="http://farm9.staticflickr.com/8200/8220393833_e52cabfe80_b.jpg" title="Trees (Joerg Marx)"> -->
+<!-- 			<img src="http://farm9.staticflickr.com/8200/8220393833_e52cabfe80_m.jpg" alt="" /> -->
+<!-- 		</a> -->
+		
+		<br>
+		<span class="input-xlarge uneditable-input">Do not input anything...</span><br>
+		<a class="fancybox various btn btn-inverse" href="/data/non_existing_image.jpg">Non-existing url fancybox</a>
+		<div class="input-prepend input-append">
+			<span class="add-on">$</span>
+			<input class="span2" id="appendedPrependedInput" type="text">
+			<span class="add-on">.00</span>
+		</div>
+		<div id="chart_div" style="width: 500px; height: 250px;"></div>
+		<div id="chart2_div" style="width: 500px; height: 250px;"></div>
+		
+    </div>
+    
+	
+</body>
+</html>
